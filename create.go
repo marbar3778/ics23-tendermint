@@ -4,9 +4,8 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/confio/ics23-tendermint/helpers"
 	ics23 "github.com/confio/ics23/go"
-	"github.com/tendermint/tendermint/crypto/merkle"
+	sdkroot "github.com/cosmos/cosmos-sdk/store/rootmulti"
 )
 
 // TendermintSpec constrains the format from ics23-tendermint (crypto/merkle SimpleProof)
@@ -53,7 +52,7 @@ func CreateNonMembershipProof(data map[string][]byte, key []byte) (*ics23.Commit
 		return nil, fmt.Errorf("Cannot create non-membership proof if key is in map")
 	}
 
-	keys := helpers.SortedKeys(data)
+	keys := SortedKeys(data)
 	rightidx := sort.SearchStrings(keys, string(key))
 
 	var err error
@@ -94,7 +93,7 @@ func createExistenceProof(data map[string][]byte, key []byte) (*ics23.ExistenceP
 		return nil, fmt.Errorf("cannot make existence proof if key is not in map")
 	}
 
-	_, ics23, _ := merkle.SimpleProofsFromMap(data)
+	_, ics23, _ := sdkroot.SimpleProofsFromMap(data)
 	proof := ics23[string(key)]
 	if proof == nil {
 		return nil, fmt.Errorf("returned no proof for key")

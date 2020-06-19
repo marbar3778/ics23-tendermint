@@ -1,17 +1,19 @@
-package helpers
+package tmproofs
 
 import (
 	"sort"
 
 	"github.com/tendermint/tendermint/crypto/merkle"
 	"github.com/tendermint/tendermint/libs/rand"
+
+	sdkroot "github.com/cosmos/cosmos-sdk/store/rootmulti"
 )
 
 // SimpleResult contains a merkle.SimpleProof along with all data needed to build the confio/proof
 type SimpleResult struct {
 	Key      []byte
 	Value    []byte
-	Proof    *merkle.SimpleProof
+	Proof    *merkle.Proof
 	RootHash []byte
 }
 
@@ -20,7 +22,7 @@ type SimpleResult struct {
 // returns a range proof and the root hash of the tree
 func GenerateRangeProof(size int, loc Where) *SimpleResult {
 	data := BuildMap(size)
-	root, proofs, allkeys := merkle.SimpleProofsFromMap(data)
+	root, proofs, allkeys := sdkroot.SimpleProofsFromMap(data)
 
 	key := GetKey(allkeys, loc)
 	proof := proofs[key]
